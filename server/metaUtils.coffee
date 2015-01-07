@@ -455,7 +455,7 @@ metaUtils.getNextUserFromQueue = (queueStrId, user) ->
 
 metaUtils.getNextCode = (documentName, fieldName) ->
 	# Get Collection
-	collection = MongoInternals.defaultRemoteCollectionDriver().mongo._getCollection "data.#{documentName}.AutoNumber"
+	collection = MongoInternals.defaultRemoteCollectionDriver().mongo._getCollection "#{meta.collection}.AutoNumber"
 
 	# Create sync version of findAndModify in scope of collection
 	findAndModify = Meteor.wrapAsync _.bind(collection.findAndModify, collection)
