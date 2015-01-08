@@ -369,7 +369,7 @@ metaUtils.validateAndProcessValueFor = (meta, fieldName, value, actionType, mode
 				record = lookupModel.findOne(query)
 
 				if not record?
-					return new Error "Record not found for field #{fieldName} with _id [#{value._id}] on document [#{field.document}] not found"
+					return new Error "Record not found for field #{fieldName} with _id [#{value._id}] on document [#{field.document}]"
 
 				lookupUtils.copyDescriptionAndInheritedFields field, value, record, meta, actionType, model, objectOriginalValues, objectNewValues, idsToUpdate
 
