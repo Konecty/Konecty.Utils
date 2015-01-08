@@ -357,10 +357,7 @@ metaUtils.validateAndProcessValueFor = (meta, fieldName, value, actionType, mode
 			when 'lookup', 'inheritLookup'
 				if mustBeObject(value) is false then return result
 
-				if mustBeObject(value._id, "#{fieldName}._id") is false then return result
-
-				if not _.isString value._id
-					return new Error "Value for field #{fieldName}._id must be a valid String"
+				if mustBeString(value._id, "#{fieldName}._id") is false then return result
 
 				lookupModel = Models[field.document]
 				if not lookupModel?
