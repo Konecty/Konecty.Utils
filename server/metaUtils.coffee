@@ -337,9 +337,7 @@ metaUtils.validateAndProcessValueFor = (meta, fieldName, value, actionType, mode
 				if mustBeValidFilter(value) is false then return result
 
 				utils.recursiveObject value, (key, value, parent) ->
-					if value?['$oid']
-						parent[key] = new Meteor.Collection.ObjectID value['$oid']
-					else if value?['$date']
+					if value?['$date']
 						parent[key] = new Date value['$date']
 
 			when 'composite'
@@ -361,23 +359,20 @@ metaUtils.validateAndProcessValueFor = (meta, fieldName, value, actionType, mode
 
 				if mustBeObject(value._id, "#{fieldName}._id") is false then return result
 
-				if value._id instanceof Meteor.Collection.ObjectID
-					value._id = { $oid: value._id.valueOf() }
-
-				if not /^[0-9a-zA-Z]{24}$/.test value._id.$oid
-					return new Error "Value for field #{fieldName}._id.$oid must be a valid ObjectId"
+				if not _.isString value._id
+					return new Error "Value for field #{fieldName}._id must be a valid String"
 
 				lookupModel = Models[field.document]
 				if not lookupModel?
 					return new Error "Document #{field.document} not found"
 
 				query =
-					_id: new Meteor.Collection.ObjectID value._id.$oid
+					_id: value._id
 
 				record = lookupModel.findOne(query)
 
 				if not record?
-					return new Error "Record not found for field #{fieldName} with _id [#{value._id.$oid}] on document [#{field.document}] not found"
+					return new Error "Record not found for field #{fieldName} with _id [#{value._id}] on document [#{field.document}] not found"
 
 				lookupUtils.copyDescriptionAndInheritedFields field, value, record, meta, actionType, model, objectOriginalValues, objectNewValues, idsToUpdate
 
@@ -448,7 +443,7 @@ metaUtils.getNextUserFromQueue = (queueStrId, user) ->
 
 	# ConvertIds
 	utils.convertObjectIdsToFn queueUser, (id) ->
-		new Meteor.Collection.ObjectID id
+		id.valueOf()
 
 	# Return queueUser
 	return queueUser

@@ -109,8 +109,8 @@ filterUtils.parseConditionValue = (condition, field, req, subTermPart) ->
 				groups.push group._id for group in req.user.groups
 			return groups
 
-	if subTermPart is '._id' and _.isObject(condition.value) and _.isString(condition.value.$oid)
-		return new Meteor.Collection.ObjectID condition.value.$oid
+	if subTermPart is '._id' and _.isString(condition.value)
+		return condition.value
 
 	switch field.type
 		when 'Number'
@@ -190,8 +190,8 @@ filterUtils.parseFilterCondition = (condition, metaObject, req, invert) ->
 	processValueByType = (value) ->
 		switch type
 			when 'ObjectId'
-				if _.isObject(value) and _.isString(value.$oid)
-					value = new Meteor.Collection.ObjectID value.$oid
+				if _.isString(value)
+					value = value
 			when 'date', 'dateTime'
 				if _.isObject(value) and _.isString(value.$date)
 					value = new Date value.$date

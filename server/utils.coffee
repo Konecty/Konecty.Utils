@@ -119,6 +119,8 @@ utils.getObjectIdString = (objectId) ->
 	if _.isObject(objectId) and _.isString(objectId.$oid)
 		return objectId.$oid
 
+	return objectId
+
 utils.convertStringOfFieldsSeparatedByCommaIntoObjectToFind = (fieldsString) ->
 	fields = {}
 
