@@ -446,6 +446,8 @@ metaUtils.getNextUserFromQueue = (queueStrId, user) ->
 	return queueUser
 
 metaUtils.getNextCode = (documentName, fieldName) ->
+	meta = Meta[documentName]
+
 	# Get Collection
 	collection = MongoInternals.defaultRemoteCollectionDriver().mongo._getCollection "#{meta.collection}.AutoNumber"
 
