@@ -401,9 +401,6 @@ metaUtils.validateAndProcessValueFor = (meta, fieldName, value, actionType, mode
 	return value
 
 metaUtils.getNextUserFromQueue = (queueStrId, user) ->
-	# Conver id to mongo native ObjectId format
-	queueOid = MongoInternals.defaultRemoteCollectionDriver().mongo.db.bsonLib.ObjectID queueStrId
-
 	# Get Collection
 	collection = MongoInternals.defaultRemoteCollectionDriver().mongo._getCollection 'data.QueueUser'
 
@@ -412,7 +409,7 @@ metaUtils.getNextUserFromQueue = (queueStrId, user) ->
 
 	# Mount query, sort, update, and options
 	query =
-		'queue._id': queueOid
+		'queue._id': queueStrId
 
 	sort =
 		count: 1
