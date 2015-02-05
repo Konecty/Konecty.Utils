@@ -6,34 +6,34 @@ metaUtils.validateAndProcessValueFor = (meta, fieldName, value, actionType, mode
 	field = meta.fields[fieldName]
 
 	if not field?
-		return new Error "Field #{fieldName} does not exists on #{meta._id}"
+		return new Meteor.Error 'utils-internal-error', "Field #{fieldName} does not exists on #{meta._id}"
 
 	# Validate required fields
 	if field.isRequired is true and not value?
-		return new ErrorWithCode 'V15', "O Campo '#{fieldName}' é obrigatório, mas não está presente no dado."
+		return new Meteor.Error 'utils-internal-error', "O Campo '#{fieldName}' é obrigatório, mas não está presente no dado."
 
 	# Validate List fields
 	if field.isList is true
 		if field.maxElements? and field.maxElements > 0
 			if not _.isArray(value) or value.length > field.maxElements
-				return new Error "Value for field #{fieldName} must be array with the maximum of #{field.maxElements} item(s)"
+				return new Meteor.Error 'utils-internal-error', "Value for field #{fieldName} must be array with the maximum of #{field.maxElements} item(s)"
 
 		if field.minElements? and field.minElements > 0
 			if not _.isArray(value) or value.length < field.minElements
-				return new Error "Value for field #{fieldName} must be array with at least #{field.minElements} item(s)"
+				return new Meteor.Error 'utils-internal-error', "Value for field #{fieldName} must be array with at least #{field.minElements} item(s)"
 
 		if field.isAllowDuplicates is false and _.isArray(value)
 			for itemA in value
 				for itemB in value
 					if utils.deepEqual(itemA, itemB) is true
-						return new Error "Value for field #{fieldName} must be array no duplicated values"
+						return new Meteor.Error 'utils-internal-error', "Value for field #{fieldName} must be array no duplicated values"
 
 	# Validate picklist min selected
 	if field.type is 'picklist'
 		if _.isNumber(field.minSelected)
 			if field.minSelected is 1
 				if not value? or (_.isArray(value) and value.length is 0)
-					return new ErrorWithCode 'V16', "A lista de escolha '#{fieldName}' exige o mínimo de 1 valores selecionados. Mas não está presente no dado."
+					return new Meteor.Error 'utils-internal-error', "A lista de escolha '#{fieldName}' exige o mínimo de 1 valores selecionados. Mas não está presente no dado."
 
 	if not value? and field.type isnt 'autoNumber'
 		return value
@@ -52,7 +52,7 @@ metaUtils.validateAndProcessValueFor = (meta, fieldName, value, actionType, mode
 
 		count = model.find(query).count()
 		if count > 0
-			return new Error "Value for field #{fieldName} must be unique"
+			return new Meteor.Error 'utils-internal-error', "Value for field #{fieldName} must be unique"
 
 	result = true
 
@@ -69,26 +69,26 @@ metaUtils.validateAndProcessValueFor = (meta, fieldName, value, actionType, mode
 
 	mustBeValidFilter = (v) ->
 		if not v.match in ['and', 'or']
-			result = new Error "Value for field #{fieldName} must contains a property named 'match' with one of values ['and', 'or']"
+			result = new Meteor.Error 'utils-internal-error', "Value for field #{fieldName} must contains a property named 'match' with one of values ['and', 'or']"
 			return false
 
-		if not _.isArray(v.conditions)
-			result = new Error "Value for field #{fieldName} must contains a property named 'conditions' of type Array with at least 1 item"
+		if not _.isObject(v.conditions)
+			result = new Meteor.Error 'utils-internal-error', "Value for field #{fieldName} must contains a property named 'conditions' of type Array with at least 1 item"
 			return false
 
-		for condition in v.conditions
+		for key, condition of v.conditions
 			if mustBeString(condition.term) is false or mustBeString(condition.operator) is false
-				result = new Error "Value for field #{fieldName} must contains conditions with properties 'term' and 'operator' of type String"
+				result = new Meteor.Error 'utils-internal-error', "Value for field #{fieldName} must contains conditions with properties 'term' and 'operator' of type String"
 				return false
 
 			operators = ['exists', 'equals', 'not_equals', 'in', 'not_in', 'contains', 'not_contains', 'starts_with', 'end_with', 'less_than', 'greater_than', 'less_or_equals', 'greater_or_equals', 'between']
 
 			if not condition.operator in operators
-				result = new Error "Value for field #{fieldName} must contains conditions with valid operators such as [#{operators.join(', ')}]"
+				result = new Meteor.Error 'utils-internal-error', "Value for field #{fieldName} must contains conditions with valid operators such as [#{operators.join(', ')}]"
 				return false
 
 			if not condition.value?
-				result = new Error "Value for field #{fieldName} must contains conditions property named 'value'"
+				result = new Meteor.Error 'utils-internal-error', "Value for field #{fieldName} must contains conditions property named 'value'"
 				return false
 
 		if _.isArray(v.filters)
@@ -98,7 +98,7 @@ metaUtils.validateAndProcessValueFor = (meta, fieldName, value, actionType, mode
 
 	mustBeString = (v, path) ->
 		if not _.isString v
-			result = new Error "Value for field #{path or fieldName} must be a valid String"
+			result = new Meteor.Error 'utils-internal-error', "Value for field #{path or fieldName} must be a valid String"
 			return false
 
 	mustBeStringOrNull = (v, path) ->
@@ -107,7 +107,7 @@ metaUtils.validateAndProcessValueFor = (meta, fieldName, value, actionType, mode
 
 	mustBeNumber = (v, path) ->
 		if not _.isNumber v
-			result = new Error "Value for field #{path or fieldName} must be a valid Number"
+			result = new Meteor.Error 'utils-internal-error', "Value for field #{path or fieldName} must be a valid Number"
 			return false
 
 	mustBeNumberOrNull = (v, path) ->
@@ -116,7 +116,7 @@ metaUtils.validateAndProcessValueFor = (meta, fieldName, value, actionType, mode
 
 	mustBeBoolean = (v, path) ->
 		if not _.isBoolean v
-			result = new Error "Value for field #{path or fieldName} must be a valid Boolean"
+			result = new Meteor.Error 'utils-internal-error', "Value for field #{path or fieldName} must be a valid Boolean"
 			return false
 
 	mustBeBooleanOrNull = (v, path) ->
@@ -125,7 +125,7 @@ metaUtils.validateAndProcessValueFor = (meta, fieldName, value, actionType, mode
 
 	mustBeObject = (v, path) ->
 		if not _.isObject v
-			result = new Error "Value for field #{path or fieldName} must be a valid Object"
+			result = new Meteor.Error 'utils-internal-error', "Value for field #{path or fieldName} must be a valid Object"
 			return false
 
 	mustBeObjectOrNull = (v, path) ->
@@ -134,7 +134,7 @@ metaUtils.validateAndProcessValueFor = (meta, fieldName, value, actionType, mode
 
 	mustBeArray = (v, path) ->
 		if not _.isArray v
-			result = new Error "Value for field #{path or fieldName} must be a valid Array"
+			result = new Meteor.Error 'utils-internal-error', "Value for field #{path or fieldName} must be a valid Array"
 			return false
 
 	mustBeArrayOrNull = (v, path) ->
@@ -145,7 +145,7 @@ metaUtils.validateAndProcessValueFor = (meta, fieldName, value, actionType, mode
 		date = new Date v
 
 		if isNaN date
-			result = new Error "Value for field #{path or fieldName} must be a valid string or number representation of date"
+			result = new Meteor.Error 'utils-internal-error', "Value for field #{path or fieldName} must be a valid string or number representation of date"
 			return false
 
 	mustBeDateOrNull = (v, path) ->
@@ -161,26 +161,26 @@ metaUtils.validateAndProcessValueFor = (meta, fieldName, value, actionType, mode
 				if mustBeNumber(value) is false then return result
 
 				if _.isNumber(field.maxValue) and value > field.maxValue
-					return new Error "Value for field #{fieldName} must be less than #{field.maxValue}"
+					return new Meteor.Error 'utils-internal-error', "Value for field #{fieldName} must be less than #{field.maxValue}"
 
 				if _.isNumber(field.minValue) and value < field.minValue
-					return new Error "Value for field #{fieldName} must be greater than #{field.minValue}"
+					return new Meteor.Error 'utils-internal-error', "Value for field #{fieldName} must be greater than #{field.minValue}"
 
 			when 'picklist'
 				if _.isNumber(field.maxSelected) and field.maxSelected > 1
 					if mustBeArray(value) is false then return result
 					if value.length > field.maxSelected
-						return new Error "Value for field #{fieldName} must be an array with max of #{field.maxSelected} item(s)"
+						return new Meteor.Error 'utils-internal-error', "Value for field #{fieldName} must be an array with max of #{field.maxSelected} item(s)"
 
 				if _.isNumber(field.minSelected) and field.minSelected > 0
 					if value.length < field.minSelected
-						return new Error "Value for field #{fieldName} must be an array with min of #{field.minSelected} item(s)"
+						return new Meteor.Error 'utils-internal-error', "Value for field #{fieldName} must be an array with min of #{field.minSelected} item(s)"
 
 				valuesToVerify = [].concat value
 
 				for valueToVerify in valuesToVerify
 					if not field.options[valueToVerify]?
-						return new Error "Value #{valueToVerify} for field #{fieldName} is invalid"
+						return new Meteor.Error 'utils-internal-error', "Value #{valueToVerify} for field #{fieldName} is invalid"
 
 			when 'text', 'richText'
 				if _.isNumber value
@@ -193,7 +193,7 @@ metaUtils.validateAndProcessValueFor = (meta, fieldName, value, actionType, mode
 
 				if _.isNumber(field.size) and field.size > 0
 					if value.length > field.size
-						return new Error "Value for field #{fieldName} must be smaller than #{field.size}"
+						return new Meteor.Error 'utils-internal-error', "Value for field #{fieldName} must be smaller than #{field.size}"
 
 			when 'dateTime', 'date'
 				if mustBeObject(value) is false then return result
@@ -206,7 +206,7 @@ metaUtils.validateAndProcessValueFor = (meta, fieldName, value, actionType, mode
 				if mustBeNumber(value) is false then return result
 
 				if value < 0 or value > 86400000
-					return new Error "Value for field #{fieldName} must be agreater then 0 and less then 86400000"
+					return new Meteor.Error 'utils-internal-error', "Value for field #{fieldName} must be agreater then 0 and less then 86400000"
 
 			when 'email'
 				if mustBeObject(value) is false then return result
@@ -214,13 +214,13 @@ metaUtils.validateAndProcessValueFor = (meta, fieldName, value, actionType, mode
 				if mustBeStringOrNull(value.type) is false then return result
 
 				if regexUtils.email.test(value.address) is false
-					return new Error "Value for field #{fieldName}.address must be a valid email"
+					return new Meteor.Error 'utils-internal-error', "Value for field #{fieldName}.address must be a valid email"
 
 			when 'url'
 				if mustBeString(value) is false then return result
 
 				if regexUtils.url.test(value) is false
-					return new Error "Value for field #{fieldName} must be a valid url"
+					return new Meteor.Error 'utils-internal-error', "Value for field #{fieldName} must be a valid url"
 
 			when 'personName'
 				if mustBeObject(value) is false then return result
@@ -257,16 +257,16 @@ metaUtils.validateAndProcessValueFor = (meta, fieldName, value, actionType, mode
 				if mustBeStringOrNull(value.extention, "#{fieldName}.type") is false then return result
 
 				if value.countryCode < 0 or value.countryCode > 999
-					return new Error "Value for field #{fieldName}.countryCode must contains 1, 2 or 3 digits"
+					return new Meteor.Error 'utils-internal-error', "Value for field #{fieldName}.countryCode must contains 1, 2 or 3 digits"
 
 				if value.countryCode is 55 and not /^[0-9]{8,12}$/.test value.phoneNumber
-					return new Error "Value for field #{fieldName}.phoneNumber with countryCode '55' must contains from 8 to 12 digits"
+					return new Meteor.Error 'utils-internal-error', "Value for field #{fieldName}.phoneNumber with countryCode '55' must contains from 8 to 12 digits"
 
 			when 'geoloc'
 				if mustBeArray(value) is false then return result
 
 				if value.length isnt 2 or not _.isNumber(value[0]) or not _.isNumber(value[1])
-					return new Error "Value for field #{fieldName} must be an array with longitude and latitude"
+					return new Meteor.Error 'utils-internal-error', "Value for field #{fieldName} must be an array with longitude and latitude"
 
 			when 'money'
 				if mustBeObject(value) is false then return result
@@ -275,14 +275,14 @@ metaUtils.validateAndProcessValueFor = (meta, fieldName, value, actionType, mode
 
 				currencies = ['BRL']
 				if not _.isString(value.currency) or not value.currency in currencies
-					return new Error "Value for field #{fieldName}.currency must be one of [#{currencies.join(', ')}]"
+					return new Meteor.Error 'utils-internal-error', "Value for field #{fieldName}.currency must be one of [#{currencies.join(', ')}]"
 
 				if not _.isNumber value.value
-					return new Error "Value for field #{fieldName}.value must be a valid Number"
+					return new Meteor.Error 'utils-internal-error', "Value for field #{fieldName}.value must be a valid Number"
 
 			when 'json'
 				if not _.isObject(value) and not _.isArray(value)
-					return new Error "Value for field #{fieldName} must be a valid Array or Object"
+					return new Meteor.Error 'utils-internal-error', "Value for field #{fieldName} must be a valid Array or Object"
 
 			when 'password'
 				if mustBeString(value) is false then return result
@@ -329,7 +329,7 @@ metaUtils.validateAndProcessValueFor = (meta, fieldName, value, actionType, mode
 				if mustBeArrayOrNull(value.geolocation, "#{fieldName}.geolocation") is false then return result
 
 				if _.isArray(value.geolocation) and (value.geolocation.length isnt 2 or not _.isNumber(value.geolocation[0]) or not _.isNumber(value.geolocation[1]))
-					return new Error "Value for field #{fieldName}.geolocation must be an array with longitude and latitude"
+					return new Meteor.Error 'utils-internal-error', "Value for field #{fieldName}.geolocation must be an array with longitude and latitude"
 
 			when 'filter'
 				if mustBeObject(value) is false then return result
@@ -346,7 +346,7 @@ metaUtils.validateAndProcessValueFor = (meta, fieldName, value, actionType, mode
 				if field.compositeType is 'reference'
 					meta = Meta[field.objectRefId]
 					if not meta?
-						return new Error "Document #{field.objectRefId} not found"
+						return new Meteor.Error 'utils-internal-error', "Document #{field.objectRefId} not found"
 
 					for key, subValue of value
 						validation = metaUtils.validateAndProcessValueFor meta, key, subValue, actionType, model, value, value, idsToUpdate
@@ -361,7 +361,7 @@ metaUtils.validateAndProcessValueFor = (meta, fieldName, value, actionType, mode
 
 				lookupModel = Models[field.document]
 				if not lookupModel?
-					return new Error "Document #{field.document} not found"
+					return new Meteor.Error 'utils-internal-error', "Document #{field.document} not found"
 
 				query =
 					_id: value._id
@@ -369,7 +369,7 @@ metaUtils.validateAndProcessValueFor = (meta, fieldName, value, actionType, mode
 				record = lookupModel.findOne(query)
 
 				if not record?
-					return new Error "Record not found for field #{fieldName} with _id [#{value._id}] on document [#{field.document}]"
+					return new Meteor.Error 'utils-internal-error', "Record not found for field #{fieldName} with _id [#{value._id}] on document [#{field.document}]"
 
 				lookupUtils.copyDescriptionAndInheritedFields field, value, record, meta, actionType, model, objectOriginalValues, objectNewValues, idsToUpdate
 
@@ -381,7 +381,7 @@ metaUtils.validateAndProcessValueFor = (meta, fieldName, value, actionType, mode
 				removeUnauthorizedKeys value, keys
 
 			else
-				e = new Error "Field #{fieldName} of type #{field.type} can not be validated"
+				e = new Meteor.Error 'utils-internal-error', "Field #{fieldName} of type #{field.type} can not be validated"
 				NotifyErrors.notify 'ValidateError', e
 				return e
 
@@ -391,7 +391,7 @@ metaUtils.validateAndProcessValueFor = (meta, fieldName, value, actionType, mode
 		return validate value
 
 	if not _.isArray value
-		return new Error "Value for field #{fieldName} must be array"
+		return new Meteor.Error 'utils-internal-error', "Value for field #{fieldName} must be array"
 
 	for item, index in value
 		value[index] = validate item

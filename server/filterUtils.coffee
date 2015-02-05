@@ -73,7 +73,7 @@ filterUtils.parseConditionValue = (condition, field, req, subTermPart) ->
 	if field.type is 'lookup' and subTermPart isnt '._id' and subTermPart.indexOf('.') isnt -1
 		meta = Meta[field.document]
 		if not meta?
-			e = new Error "Meta #{field.document} of field #{field.name} not found"
+			e = new Meteor.Error 'utils-internal-error', "Meta #{field.document} of field #{field.name} not found"
 			NotifyErrors.notify 'FilterError', e
 			return e
 
@@ -124,7 +124,7 @@ filterUtils.validateOperator = (condition, field, subTermPart) ->
 	if field.type is 'lookup' and subTermPart isnt '._id' and subTermPart.indexOf('.') isnt -1
 		meta = Meta[field.document]
 		if not meta?
-			e = new Error "Meta #{field.document} of field #{field.name} not found"
+			e = new Meteor.Error 'utils-internal-error', "Meta #{field.document} of field #{field.name} not found"
 			NotifyErrors.notify 'FilterError', e
 			return e
 
@@ -142,12 +142,12 @@ filterUtils.validateOperator = (condition, field, subTermPart) ->
 
 	type = field.type + subTermPart
 	if not operatoresByType[type]?
-		e = new Error "Field type [#{type}] of [#{field.name}] not supported to filter"
+		e = new Meteor.Error 'utils-internal-error', "Field type [#{type}] of [#{field.name}] not supported to filter"
 		NotifyErrors.notify 'FilterError', e, {condition: condition, field: field}
 		return e
 
 	if operatoresByType[type].indexOf(condition.operator) is -1
-		e = new Error "Field [#{condition.term}] only suport operators [#{operatoresByType[type].join(', ')}]. Trying to use operator [#{condition.operator}]"
+		e = new Meteor.Error 'utils-internal-error', "Field [#{condition.term}] only suport operators [#{operatoresByType[type].join(', ')}]. Trying to use operator [#{condition.operator}]"
 		NotifyErrors.notify 'FilterError', e, {condition: condition}
 		return e
 
@@ -155,7 +155,7 @@ filterUtils.validateOperator = (condition, field, subTermPart) ->
 
 filterUtils.parseFilterCondition = (condition, metaObject, req, invert) ->
 	if not _.isString(condition.term) or validOperators.indexOf(condition.operator) is -1 or not condition.value?
-		return new Error 'All conditions must contain term, operator and value'
+		return new Meteor.Error 'utils-internal-error', 'All conditions must contain term, operator and value'
 
 	# Allow compatibility with old filters containing .data in isList fields
 	condition.term = condition.term.replace '.data', ''
@@ -173,7 +173,7 @@ filterUtils.parseFilterCondition = (condition, metaObject, req, invert) ->
 			type: 'ObjectId'
 
 	if not field?
-		return new Error "Field [#{condition.term}] does not exists at [#{metaObject._id}]"
+		return new Meteor.Error 'utils-internal-error', "Field [#{condition.term}] does not exists at [#{metaObject._id}]"
 
 	result = filterUtils.validateOperator condition, field, subTermPart
 	if result instanceof Error
@@ -249,7 +249,7 @@ filterUtils.parseFilterCondition = (condition, metaObject, req, invert) ->
 		when 'exists'
 			queryCondition[condition.term] = $exists: value
 		else
-			e = new Error "Operator [#{condition.operator}] not supported"
+			e = new Meteor.Error 'utils-internal-error', "Operator [#{condition.operator}] not supported"
 			NotifyErrors.notify 'FilterError', e, {condition: condition}
 			return e
 
