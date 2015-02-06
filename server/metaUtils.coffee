@@ -73,7 +73,7 @@ metaUtils.validateAndProcessValueFor = (meta, fieldName, value, actionType, mode
 			return false
 
 		if not _.isObject(v.conditions)
-			result = new Meteor.Error 'utils-internal-error', "Value for field #{fieldName} must contains a property named 'conditions' of type Array with at least 1 item"
+			result = new Meteor.Error 'utils-internal-error', "Value for field #{fieldName} must contains a property named 'conditions' of type Object with at least 1 item"
 			return false
 
 		for key, condition of v.conditions

@@ -278,6 +278,15 @@ filterUtils.parseFilterObject = (filter, metaObject, req) ->
 					return result
 				query.push result
 
+	else if _.isObject(filter.conditions) and Object.keys(filter.conditions).length > 0
+		for key, condition of filter.conditions
+			if condition.disabled isnt true
+				result = filterUtils.parseFilterCondition condition, metaObject, req
+				if result instanceof Error
+					console.log result
+					return result
+				query.push result
+
 	if query.length is 0
 		return {}
 

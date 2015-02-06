@@ -95,6 +95,10 @@ utils.getTermsOfFilter = (filter) ->
 		for condition in filter.conditions
 			terms.push condition.term
 
+	else if _.isObject filter.conditions
+		for key, condition of filter.conditions
+			terms.push condition.term
+
 	if _.isArray filter.filters
 		for i in filter.filters
 			terms = terms.concat utils.getTermsOfFilter i
