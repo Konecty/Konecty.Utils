@@ -216,11 +216,15 @@ metaUtils.validateAndProcessValueFor = (meta, fieldName, value, actionType, mode
 				if regexUtils.email.test(value.address) is false
 					return new Meteor.Error 'utils-internal-error', "Value for field #{fieldName}.address must be a valid email"
 
+				value.address = value.address.toLowerCase()
+
 			when 'url'
 				if mustBeString(value) is false then return result
 
 				if regexUtils.url.test(value) is false
 					return new Meteor.Error 'utils-internal-error', "Value for field #{fieldName} must be a valid url"
+
+				value = value.toLowerCase()
 
 			when 'personName'
 				if mustBeObject(value) is false then return result
@@ -233,6 +237,7 @@ metaUtils.validateAndProcessValueFor = (meta, fieldName, value, actionType, mode
 				for key in keys
 					if mustBeStringOrNull(value[key], "#{fieldName}.#{key}") is false then return result
 					if _.isString value[key]
+						value[key] = changeCase.titleCase value[key]
 						fullName.push value[key]
 
 				value.full = fullName.join ' '
