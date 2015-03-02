@@ -203,6 +203,7 @@ utils.runScriptBeforeValidation = (script, data, req) ->
 			return {}
 	catch e
 		req.notifyError 'runScriptBeforeValidation', e, {script: script, data: data}
+		return {}
 
 utils.formatValue = (value, field, ignoreIsList) ->
 	if not value?
