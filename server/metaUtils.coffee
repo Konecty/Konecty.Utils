@@ -72,6 +72,12 @@ metaUtils.validateAndProcessValueFor = (meta, fieldName, value, actionType, mode
 			result = new Meteor.Error 'utils-internal-error', "Value for field #{fieldName} must contains a property named 'match' with one of values ['and', 'or']"
 			return false
 
+		if _.isArray(v.conditions)
+			objectOfConditions = {}
+			for condition in v.conditions
+				objectOfConditions[condition.term.replace(/\./g, ':') + ':' + condition.operator] = condition
+			v.conditions = objectOfConditions
+
 		if not _.isObject(v.conditions)
 			result = new Meteor.Error 'utils-internal-error', "Value for field #{fieldName} must contains a property named 'conditions' of type Object with at least 1 item"
 			return false
