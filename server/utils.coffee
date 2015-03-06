@@ -36,19 +36,25 @@ utils.deepEqual = (a, b) ->
 	if typeof a isnt typeof b
 		return false
 
+	if _.isArray a
+		if not _.isArray b
+			return false
+		return compareArray()
+
+	if _.isDate a
+		console.log a, b
+		if not _.isDate b
+			return false
+
+		return a.getTime() is b.getTime()
+
 	if _.isObject a
 		if not _.isObject b
 			return false
 
 		return compareObject()
 
-	if _.isArray a
-		if not _.isArray b
-			return false
-		return compareArray()
-
-	if a is b
-		return true
+	return a is b
 
 utils.copyObjectFieldsByPaths = (fromObject, toObject, paths) ->
 	for path in paths
