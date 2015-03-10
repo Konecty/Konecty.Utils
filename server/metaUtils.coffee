@@ -455,16 +455,20 @@ metaUtils.getNextUserFromQueue = (queueStrId, user) ->
 
 metaUtils.getNextCode = (documentName, fieldName) ->
 	meta = Meta[documentName]
+	fieldName ?= 'code'
 
 	# Get Collection
 	collection = MongoInternals.defaultRemoteCollectionDriver().mongo._getCollection "#{meta.collection}.AutoNumber"
+
+	# Force autoNumber record to exists
+	Models["#{documentName}.AutoNumber"].upsert {_id: fieldName}, {$set: {_id: fieldName}}
 
 	# Create sync version of findAndModify in scope of collection
 	findAndModify = Meteor.wrapAsync _.bind(collection.findAndModify, collection)
 
 	# Mount query, sort, update, and options
 	query =
-		_id: fieldName or 'code'
+		_id: fieldName
 
 	sort = {}
 
