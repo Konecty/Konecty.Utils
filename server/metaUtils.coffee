@@ -438,12 +438,16 @@ metaUtils.getNextUserFromQueue = (queueStrId, user) ->
 
 	options =
 		'new': true
-		upsert: true
 
 	# Execute findAndModify
 	queueUser = findAndModify query, sort, update, options
 
 	if not _.isObject queueUser
+		queueUser = Models.Queue.findOne queueStrId
+		if queueUser?._user?[0]?
+			return {
+				user: queueUser._user[0]
+			}
 		return undefined
 
 	# ConvertIds
