@@ -35,6 +35,9 @@ metaUtils.validateAndProcessValueFor = (meta, fieldName, value, actionType, mode
 				if not value? or (_.isArray(value) and value.length is 0)
 					return new Meteor.Error 'utils-internal-error', "A lista de escolha '#{fieldName}' exige o mínimo de 1 valores selecionados. Mas não está presente no dado."
 
+	if not value? and field.type is 'lookup'
+		lookupUtils.removeInheritedFields field, objectNewValues
+
 	if not value? and field.type isnt 'autoNumber'
 		return value
 

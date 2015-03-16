@@ -26,3 +26,10 @@ lookupUtils.copyDescriptionAndInheritedFields = (lookupField, lookupValue, looku
 					if validation instanceof Error
 						return validation
 					objectNewValues[inheritedField.fieldName] = validation
+
+
+lookupUtils.removeInheritedFields = (lookupField, objectNewValues) ->
+	if _.isArray lookupField.inheritedFields
+		for inheritedField in lookupField.inheritedFields
+			if inheritedField.inherit is 'always'
+				objectNewValues[inheritedField.fieldName] = null
