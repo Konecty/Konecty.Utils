@@ -42,7 +42,6 @@ utils.deepEqual = (a, b) ->
 		return compareArray()
 
 	if _.isDate a
-		console.log a, b
 		if not _.isDate b
 			return false
 
