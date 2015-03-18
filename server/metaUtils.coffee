@@ -416,7 +416,7 @@ metaUtils.validateAndProcessValueFor = (meta, fieldName, value, actionType, mode
 
 metaUtils.getNextUserFromQueue = (queueStrId, user) ->
 	# Get Collection
-	collection = MongoInternals.defaultRemoteCollectionDriver().mongo._getCollection 'data.QueueUser'
+	collection = Models.QueueUser._getCollection()
 
 	# Create sync version of findAndModify in scope of collection
 	findAndModify = Meteor.wrapAsync _.bind(collection.findAndModify, collection)
@@ -465,7 +465,7 @@ metaUtils.getNextCode = (documentName, fieldName) ->
 	fieldName ?= 'code'
 
 	# Get Collection
-	collection = MongoInternals.defaultRemoteCollectionDriver().mongo._getCollection "#{meta.collection}.AutoNumber"
+	collection = Models["#{documentName}.AutoNumber"]._getCollection()
 
 	# Force autoNumber record to exists
 	Models["#{documentName}.AutoNumber"].upsert {_id: fieldName}, {$set: {_id: fieldName}}
