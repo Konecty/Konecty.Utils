@@ -40,6 +40,7 @@ operatoresByType =
 	'date'              : ['exists', 'equals', 'not_equals', 'in', 'not_in',                                                        'less_than', 'greater_than', 'less_or_equals', 'greater_or_equals', 'between']
 	'dateTime'          : ['exists', 'equals', 'not_equals', 'in', 'not_in',                                                        'less_than', 'greater_than', 'less_or_equals', 'greater_or_equals', 'between']
 	#TODO 'time'              : ['exists', 'equals', 'not_equals', 'in', 'not_in',                                                        'less_than', 'greater_than', 'less_or_equals', 'greater_or_equals', 'between']
+	'money.currency'    : ['exists', 'equals', 'not_equals', 'in', 'not_in',                                                        'less_than', 'greater_than', 'less_or_equals', 'greater_or_equals', 'between']
 	'money.value'       : ['exists', 'equals', 'not_equals', 'in', 'not_in',                                                        'less_than', 'greater_than', 'less_or_equals', 'greater_or_equals', 'between']
 	'boolean'           : ['exists', 'equals', 'not_equals']
 	'address.country'   : ['exists', 'equals', 'not_equals']
@@ -198,6 +199,9 @@ filterUtils.parseFilterCondition = (condition, metaObject, req, invert) ->
 			when 'phone.countryCode'
 				if _.isString value
 					value = parseInt value
+			when 'money.currency'
+				if condition.operator isnt 'not_equals'
+					condition.operator = 'equals'
 		return value
 
 
