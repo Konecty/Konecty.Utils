@@ -1,7 +1,7 @@
 Package.describe({
   name: 'konutils',
   summary: '',
-  version: '1.0.15',
+  version: '1.0.16',
   git: ''
 });
 
