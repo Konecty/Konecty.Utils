@@ -311,3 +311,32 @@ utils.formatValue = (value, field, ignoreIsList) ->
 				return value
 		else
 			return value
+
+utils.getObjectPathAgg = (obj, path, defaultValue) ->
+	if not path?
+		return obj
+
+	if not obj?
+		return defaultValue
+
+	if _.isString path
+		return utils.getObjectPathAgg obj, path.split('.'), defaultValue
+
+	currentPath = path[0]
+
+	if path.length is 1
+		if obj[currentPath] is undefined
+			return defaultValue
+
+		return obj[currentPath]
+
+	value
+	if _.isArray(obj[currentPath]) and not /^\d$/.test(path[1])
+		value = []
+		path = path.slice(1)
+		for item in obj[currentPath]
+			value = value.concat utils.getObjectPathAgg item, path, defaultValue
+	else
+		value = utils.getObjectPathAgg obj[currentPath], path.slice(1), defaultValue
+
+	return value

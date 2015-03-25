@@ -111,7 +111,7 @@ filterUtils.parseConditionValue = (condition, field, req, subTermPart) ->
 			return groups
 
 	if /^\$user\..+/.test condition.value
-		return ObjectPath.get req.user, condition.value.replace('$user.', '')
+		return utils.getObjectPathAgg req.user, condition.value.replace('$user.', '')
 
 	if subTermPart is '._id' and _.isString(condition.value)
 		return condition.value
