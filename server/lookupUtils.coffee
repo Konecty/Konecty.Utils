@@ -13,7 +13,12 @@ lookupUtils.copyDescriptionAndInheritedFields = (lookupField, lookupValue, looku
 
 	if _.isArray lookupField.inheritedFields
 		for inheritedField in lookupField.inheritedFields
-			if inheritedField.inherit in ['always', 'once_readonly']
+			if inheritedField.inherit in ['always', 'hierarchy_always', 'once_readonly']
+				if inheritedField.inherit is 'hierarchy_always'
+					lookupRecord[inheritedField.fieldName] ?= []
+					lookupRecord[inheritedField.fieldName].push
+						_id: lookupRecord._id
+
 				validation = metaUtils.validateAndProcessValueFor meta, inheritedField.fieldName, lookupRecord[inheritedField.fieldName], actionType, model, objectOriginalValues, objectNewValues, idsToUpdate
 				if validation instanceof Error
 					return validation
@@ -31,5 +36,5 @@ lookupUtils.copyDescriptionAndInheritedFields = (lookupField, lookupValue, looku
 lookupUtils.removeInheritedFields = (lookupField, objectNewValues) ->
 	if _.isArray lookupField.inheritedFields
 		for inheritedField in lookupField.inheritedFields
-			if inheritedField.inherit is 'always'
+			if inheritedField.inherit in ['always', 'hierarchy_always']
 				objectNewValues[inheritedField.fieldName] = null
