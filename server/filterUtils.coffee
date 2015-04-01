@@ -203,7 +203,7 @@ filterUtils.parseFilterCondition = (condition, metaObject, req, invert) ->
 				if _.isString value
 					value = parseInt value
 			when 'money.currency'
-				if condition.operator isnt 'not_equals'
+				if condition.operator not in ['not_equals', 'exists']
 					condition.operator = 'equals'
 		return value
 
