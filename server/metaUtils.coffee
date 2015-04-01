@@ -496,3 +496,32 @@ metaUtils.getNextCode = (documentName, fieldName) ->
 
 	# If no results return 0
 	return 0
+
+### Populate passed data with more lookup information
+	@param {String} documentName
+	@param {Object} data
+	@param {Object} fields  An Object with names of fields to populate with witch fields to populate
+
+	@example
+		metaUtils.populateLookupsData('Recruitment', record, {job: {code: 1}, contact: {code: 1, name: 1}})
+###
+metaUtils.populateLookupsData = (documentName, data, fields) ->
+	check fields, Object
+
+	meta = Meta[documentName]
+
+	for fieldName, field of meta.fields when field.type is 'lookup' and data[fieldName]? and fields[fieldName]?
+		options = {}
+		if Match.test fields[fieldName], Object
+			options.fields = fields[fieldName]
+
+		if field.isList isnt true
+			data[fieldName] = Models[field.document].findOne({_id: data[fieldName]._id}, options)
+		else
+			ids = data[fieldName]?.map (item) ->
+				return item._id
+
+			if ids.length > 0
+				data[fieldName] = Models[field.document].find({_id: $in: ids}, options).fetch()
+
+	return data
