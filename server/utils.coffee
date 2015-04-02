@@ -216,7 +216,6 @@ utils.runScriptBeforeValidation = (script, data, req) ->
 				if email.toPath?
 					email.to = utils.getObjectPathAgg(email.data, email.toPath)
 
-				console.log 'email ->', JSON.stringify email, null, ' '
 				Models['queue.Email'].insert email 
 
 		if sandbox.result? and _.isObject sandbox.result
