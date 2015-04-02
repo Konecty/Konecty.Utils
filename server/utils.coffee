@@ -209,14 +209,15 @@ utils.runScriptBeforeValidation = (script, data, req) ->
 		#	emails.push({ from: '', to: '', server: '', subject: '', template: '_id', data: {  } }); 
 		#	emails.push({ from: '', to: '', server: '', template: '_id', data: {  } }); 
 		if sandbox.emails? and _.isArray(sandbox.emails) and sandbox.emails.length > 0 and Models?['queue.Email']?
+			sandbox.emails = JSON.parse(JSON.stringify(sandbox.emails))
 			for email in sandbox.emails
 				if email.relations?
-					console.log 'email relations ->', JSON.stringify(_.clone(email.relations))
-					email.data = metaUtils.populateLookupsData(req.meta._id, data, _.clone(email.relations))
-				# if email.toPath?
-					# ...
+					email.data = metaUtils.populateLookupsData(req.meta._id, data, email.relations)
+				if email.toPath?
+					email.to = utils.getObjectPathAgg(email.data, email.toPath)
+
 				console.log 'email ->', JSON.stringify email, null, ' '
-				# Models['queue.Email'].insert email 
+				Models['queue.Email'].insert email 
 
 		if sandbox.result? and _.isObject sandbox.result
 			return sandbox.result

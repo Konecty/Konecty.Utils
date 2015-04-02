@@ -506,9 +506,7 @@ metaUtils.getNextCode = (documentName, fieldName) ->
 		metaUtils.populateLookupsData('Recruitment', record, {job: {code: 1}, contact: {code: 1, name: 1}})
 ###
 metaUtils.populateLookupsData = (documentName, data, fields) ->
-	console.log 'constructor -> ', fields.constructor
-
-	# check fields, Object
+	check fields, Object
 
 	meta = Meta[documentName]
 
