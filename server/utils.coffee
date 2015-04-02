@@ -199,9 +199,25 @@ utils.recursiveObject = (obj, fn) ->
 # Runs script in a sandboxed environment and returns resulting object
 utils.runScriptBeforeValidation = (script, data, req) ->
 	try
-		sandbox = vm.createContext { data: data }
-		script = "result = (function(data) { " + script + " })(data)"
+		sandbox = vm.createContext { data: data, emails: [] }
+		script = "result = (function(data, emails) { " + script + " })(data, emails)"
 		vm.runInContext script, sandbox
+		
+		# Check if scriptBeforeValidation added any e-mails to be sent
+		# Accepted values:
+		#	emails.push({ from: '', to: '', server: '', subject: '', html: '' }); 
+		#	emails.push({ from: '', to: '', server: '', subject: '', template: '_id', data: {  } }); 
+		#	emails.push({ from: '', to: '', server: '', template: '_id', data: {  } }); 
+		if sandbox.emails? and _.isArray(sandbox.emails) and sandbox.emails.length > 0 and Models?['queue.Email']?
+			for email in sandbox.emails
+				if email.relations?
+					console.log 'email relations ->', JSON.stringify(_.clone(email.relations))
+					email.data = metaUtils.populateLookupsData(req.meta._id, data, _.clone(email.relations))
+				# if email.toPath?
+					# ...
+				console.log 'email ->', JSON.stringify email, null, ' '
+				# Models['queue.Email'].insert email 
+
 		if sandbox.result? and _.isObject sandbox.result
 			return sandbox.result
 		else
