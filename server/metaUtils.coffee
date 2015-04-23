@@ -233,8 +233,6 @@ metaUtils.validateAndProcessValueFor = (meta, fieldName, value, actionType, mode
 				if regexUtils.url.test(value) is false
 					return new Meteor.Error 'utils-internal-error', "Value for field #{fieldName} must be a valid url"
 
-				value = value.toLowerCase()
-
 			when 'personName'
 				if mustBeObject(value) is false then return result
 
