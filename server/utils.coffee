@@ -199,8 +199,8 @@ utils.recursiveObject = (obj, fn) ->
 # Runs script in a sandboxed environment and returns resulting object
 utils.runScriptBeforeValidation = (script, data, req) ->
 	try
-		sandbox = vm.createContext { data: data, emails: [] }
-		script = "result = (function(data, emails) { " + script + " })(data, emails)"
+		sandbox = vm.createContext { data: data, emails: [], user: req.user }
+		script = "result = (function(data, emails, user) { " + script + " })(data, emails, user)"
 		vm.runInContext script, sandbox
 		
 		# Check if scriptBeforeValidation added any e-mails to be sent
