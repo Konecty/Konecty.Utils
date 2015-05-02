@@ -20,6 +20,8 @@ lookupUtils.copyDescriptionAndInheritedFields = (lookupField, lookupValue, looku
 						_id: lookupRecord._id
 
 				validation = metaUtils.validateAndProcessValueFor meta, inheritedField.fieldName, lookupRecord[inheritedField.fieldName], actionType, model, objectOriginalValues, objectNewValues, idsToUpdate
+				if validation is undefined
+					validation = null
 				if validation instanceof Error
 					return validation
 				objectNewValues[inheritedField.fieldName] = validation
