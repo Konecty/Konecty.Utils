@@ -271,8 +271,8 @@ metaUtils.validateAndProcessValueFor = (meta, fieldName, value, actionType, mode
 				if value.countryCode < 0 or value.countryCode > 999
 					return new Meteor.Error 'utils-internal-error', "Value for field #{fieldName}.countryCode must contains 1, 2 or 3 digits"
 
-				if value.countryCode is 55 and not /^[0-9]{8,12}$/.test value.phoneNumber
-					return new Meteor.Error 'utils-internal-error', "Value for field #{fieldName}.phoneNumber with countryCode '55' must contains from 8 to 12 digits"
+				if value.countryCode is 55 and not /^[0-9]{10,12}$/.test value.phoneNumber
+					return new Meteor.Error 'utils-internal-error', "Value for field #{fieldName}.phoneNumber with countryCode '55' must contains from 10 to 12 digits"
 
 			when 'geoloc'
 				if mustBeArray(value) is false then return result
