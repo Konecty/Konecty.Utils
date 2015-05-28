@@ -199,15 +199,15 @@ utils.recursiveObject = (obj, fn) ->
 # Runs script in a sandboxed environment and returns resulting object
 utils.runScriptBeforeValidation = (script, data, req) ->
 	try
-		sandbox = vm.createContext { data: data, emails: [], user: req.user }
-		script = "result = (function(data, emails, user) { " + script + " })(data, emails, user)"
+		sandbox = vm.createContext { data: data, emails: [], user: req.user, console: console }
+		script = "result = (function(data, emails, user, console) { " + script + " })(data, emails, user, console);"
 		vm.runInContext script, sandbox
-		
+
 		# Check if scriptBeforeValidation added any e-mails to be sent
 		# Accepted values:
-		#	emails.push({ from: '', to: '', server: '', subject: '', html: '' }); 
-		#	emails.push({ from: '', to: '', server: '', subject: '', template: '_id', data: {  } }); 
-		#	emails.push({ from: '', to: '', server: '', template: '_id', data: {  } }); 
+		#	emails.push({ from: '', to: '', server: '', subject: '', html: '' });
+		#	emails.push({ from: '', to: '', server: '', subject: '', template: '_id', data: {  } });
+		#	emails.push({ from: '', to: '', server: '', template: '_id', data: {  } });
 		if sandbox.emails? and _.isArray(sandbox.emails) and sandbox.emails.length > 0 and Models?['queue.Email']?
 			sandbox.emails = JSON.parse(JSON.stringify(sandbox.emails))
 			for email in sandbox.emails
@@ -216,7 +216,7 @@ utils.runScriptBeforeValidation = (script, data, req) ->
 				if email.toPath?
 					email.to = utils.getObjectPathAgg(email.data, email.toPath)
 
-				Models['queue.Email'].insert email 
+				Models['queue.Email'].insert email
 
 		if sandbox.result? and _.isObject sandbox.result
 			return sandbox.result
