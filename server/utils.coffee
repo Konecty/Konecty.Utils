@@ -197,9 +197,16 @@ utils.recursiveObject = (obj, fn) ->
 		fn key, value, obj
 
 # Runs script in a sandboxed environment and returns resulting object
-utils.runScriptBeforeValidation = (script, data, req) ->
+utils.runScriptBeforeValidation = (script, data, req, extraData) ->
 	try
-		sandbox = vm.createContext { data: data, emails: [], user: req.user, console: console }
+		contextData =
+			data: data
+			emails: []
+			user: req.user
+			console: console
+			extraData: extraData
+
+		sandbox = vm.createContext contextData
 		script = "result = (function(data, emails, user, console) { " + script + " })(data, emails, user, console);"
 		vm.runInContext script, sandbox
 
