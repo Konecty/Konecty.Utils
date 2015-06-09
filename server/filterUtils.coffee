@@ -251,7 +251,7 @@ filterUtils.parseFilterCondition = (condition, metaObject, req, invert) ->
 			queryCondition[condition.term] = {}
 			if value.greater_or_equals?
 				queryCondition[condition.term].$gte = value.greater_or_equals
-			if value.less_or_equals
+			if value.less_or_equals?
 				queryCondition[condition.term].$lte = value.less_or_equals
 		when 'exists'
 			queryCondition[condition.term] = $exists: value
