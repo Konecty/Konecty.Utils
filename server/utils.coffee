@@ -215,7 +215,7 @@ utils.runScriptBeforeValidation = (script, data, req, extraData) ->
 		#	emails.push({ from: '', to: '', server: '', subject: '', html: '' });
 		#	emails.push({ from: '', to: '', server: '', subject: '', template: '_id', data: {  } });
 		#	emails.push({ from: '', to: '', server: '', template: '_id', data: {  } });
-		if sandbox.emails? and _.isArray(sandbox.emails) and sandbox.emails.length > 0 and Models?['queue.Email']?
+		if sandbox.emails? and _.isArray(sandbox.emails) and sandbox.emails.length > 0 and Models?['Message']?
 			sandbox.emails = JSON.parse(JSON.stringify(sandbox.emails))
 			for email in sandbox.emails
 				if email.relations?
@@ -223,7 +223,10 @@ utils.runScriptBeforeValidation = (script, data, req, extraData) ->
 				if email.toPath?
 					email.to = utils.getObjectPathAgg(email.data, email.toPath)
 
-				Models['queue.Email'].insert email
+				email.type = 'Email'
+				email.status = 'Enviando'
+
+				Models['Message'].insert email
 
 		if sandbox.result? and _.isObject sandbox.result
 			return sandbox.result
