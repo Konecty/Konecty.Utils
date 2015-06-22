@@ -403,7 +403,10 @@ metaUtils.validateAndProcessValueFor = (meta, fieldName, value, actionType, mode
 		return validate value
 
 	if not _.isArray value
-		return new Meteor.Error 'utils-internal-error', "Value for field #{fieldName} must be array"
+		if value?
+			value = [value]
+		else
+			return new Meteor.Error 'utils-internal-error', "Value for field #{fieldName} must be array"
 
 	for item, index in value
 		value[index] = validate item
