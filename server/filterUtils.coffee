@@ -66,6 +66,7 @@ operatoresByType =
 	'encrypted'         : ['exists', 'equals', 'not_equals']
 	#TODO improve filter
 	'filter'            : ['exists']
+	'filter.conditions' : ['exists']
 	'richText'          : ['exists']
 
 filterUtils = {}
