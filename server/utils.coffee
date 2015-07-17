@@ -199,6 +199,7 @@ utils.recursiveObject = (obj, fn) ->
 # Runs script in a sandboxed environment and returns resulting object
 utils.runScriptBeforeValidation = (script, data, req, extraData) ->
 	try
+		req = JSON.parse JSON.stringify req
 		contextData =
 			data: data
 			emails: []
