@@ -54,7 +54,7 @@ operatoresByType =
 	'personName.first'  : ['exists', 'equals', 'not_equals',                  'contains', 'not_contains', 'starts_with', 'end_with']
 	'personName.last'   : ['exists', 'equals', 'not_equals',                  'contains', 'not_contains', 'starts_with', 'end_with']
 	'personName.full'   : ['exists', 'equals', 'not_equals',                  'contains', 'not_contains', 'starts_with', 'end_with']
-	'phone.phoneNumber' : ['exists', 'equals', 'not_equals', 'in', 'not_in',  'contains']
+	'phone.phoneNumber' : ['exists', 'equals', 'not_equals', 'in', 'not_in',  'contains', 'not_contains', 'starts_with', 'end_with']
 	'phone.countryCode' : ['exists', 'equals', 'not_equals', 'in', 'not_in']
 	'picklist'          : ['exists', 'equals', 'not_equals', 'in', 'not_in']
 	#TODO 'json':
