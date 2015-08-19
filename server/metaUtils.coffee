@@ -211,6 +211,11 @@ metaUtils.validateAndProcessValueFor = (meta, fieldName, value, actionType, mode
 
 				value = new Date(value.$date || value)
 
+				if field.type is 'date'
+					value.setHours(0)
+					value.setMinutes(0)
+					value.setSeconds(0)
+
 				if field.maxValue? and field.maxValue is '$now'
 					field.maxValue = new Date()
 					if field.type is 'date'
