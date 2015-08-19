@@ -110,6 +110,8 @@ filterUtils.parseConditionValue = (condition, field, req, subTermPart) ->
 			if req.user.groups? and _.isArray req.user.groups
 				groups.push group._id for group in req.user.groups
 			return groups
+		when '$now'
+			return new Date()
 
 	if /^\$user\..+/.test condition.value
 		return utils.getObjectPathAgg req.user, condition.value.replace('$user.', '')
