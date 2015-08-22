@@ -212,39 +212,37 @@ metaUtils.validateAndProcessValueFor = (meta, fieldName, value, actionType, mode
 				value = new Date(value.$date || value)
 
 				if field.maxValue? or field.minValue?
-					compDate = new Date(Date.UTC(value.getFullYear(), value.getMonth(), value.getDate(), value.getHours(), value.getMinutes(), value.getSeconds()));
-
+					maxValue = field.maxValue
+					minValue = field.minValue
 					if field.type is 'date'
-						compDate.setHours(0)
-						compDate.setMinutes(0)
-						compDate.setSeconds(0)
+						value.setHours(0)
+						value.setMinutes(0)
+						value.setSeconds(0)
 
-					if field.maxValue? and field.maxValue is '$now'
-						now = new Date()
-						field.maxValue = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours(), now.getMinutes(), now.getSeconds()))
+					if maxValue? and maxValue is '$now'
+						maxValue = new Date()
 						if field.type is 'date'
-							field.maxValue.setHours(0)
-							field.maxValue.setMinutes(0)
-							field.maxValue.setSeconds(0)
+							maxValue.setHours(0)
+							maxValue.setMinutes(0)
+							maxValue.setSeconds(0)
 
-					if field.minValue? and field.minValue is '$now'
-						now = new Date()
-						field.minValue = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours(), now.getMinutes(), now.getSeconds()))
+					if minValue? and minValue is '$now'
+						minValue = new Date()
 						if field.type is 'date'
-							field.minValue.setHours(0)
-							field.minValue.setMinutes(0)
-							field.minValue.setSeconds(0)
+							minValue.setHours(0)
+							minValue.setMinutes(0)
+							minValue.setSeconds(0)
 
 					if field.type is 'date'
 						momentFormat = 'DD/MM/YYYY'
 					else
 						momentFormat = 'DD/MM/YYYY HH:mm:ss'
 
-					if mustBeDate(field.maxValue) isnt false and compDate > field.maxValue
-						return new Meteor.Error 'utils-internal-error', "Value for field #{fieldName} must be less than or equals to #{moment(field.maxValue).format(momentFormat)}"
+					if mustBeDate(maxValue) isnt false and value > maxValue
+						return new Meteor.Error 'utils-internal-error', "Value for field #{fieldName} must be less than or equals to #{moment(maxValue).format(momentFormat)}"
 
-					if mustBeDate(field.minValue) isnt false and compDate < field.minValue
-						return new Meteor.Error 'utils-internal-error', "Value for field #{fieldName} must be greater than or equals to #{moment(field.minValue).format(momentFormat)}"
+					if mustBeDate(minValue) isnt false and value < minValue
+						return new Meteor.Error 'utils-internal-error', "Value for field #{fieldName} must be greater than or equals to #{moment(minValue).format(momentFormat)}"
 			when 'time'
 				if mustBeNumber(value) is false then return result
 
