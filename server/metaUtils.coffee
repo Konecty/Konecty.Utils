@@ -214,6 +214,11 @@ metaUtils.validateAndProcessValueFor = (meta, fieldName, value, actionType, mode
 				if field.maxValue? or field.minValue?
 					maxValue = field.maxValue
 					minValue = field.minValue
+					if field.type is 'date'
+						value.setHours(0)
+						value.setMinutes(0)
+						value.setSeconds(0)
+						value.setMilliseconds(0)
 
 					if maxValue? and maxValue is '$now'
 						maxValue = new Date()
@@ -221,6 +226,7 @@ metaUtils.validateAndProcessValueFor = (meta, fieldName, value, actionType, mode
 							maxValue.setHours(0)
 							maxValue.setMinutes(0)
 							maxValue.setSeconds(0)
+							maxValue.setMilliseconds(0)
 
 					if minValue? and minValue is '$now'
 						minValue = new Date()
@@ -228,11 +234,14 @@ metaUtils.validateAndProcessValueFor = (meta, fieldName, value, actionType, mode
 							minValue.setHours(0)
 							minValue.setMinutes(0)
 							minValue.setSeconds(0)
+							minValue.setMilliseconds(0)
 
 					if field.type is 'date'
 						momentFormat = 'DD/MM/YYYY'
 					else
 						momentFormat = 'DD/MM/YYYY HH:mm:ss'
+
+					console.log value, maxValue
 
 					if mustBeDate(maxValue) isnt false and value > maxValue
 						return new Meteor.Error 'utils-internal-error', "Value for field #{fieldName} must be less than or equals to #{moment(maxValue).format(momentFormat)}"
