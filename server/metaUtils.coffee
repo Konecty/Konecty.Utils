@@ -241,8 +241,6 @@ metaUtils.validateAndProcessValueFor = (meta, fieldName, value, actionType, mode
 					else
 						momentFormat = 'DD/MM/YYYY HH:mm:ss'
 
-					console.log value, maxValue
-
 					if mustBeDate(maxValue) isnt false and value > maxValue
 						return new Meteor.Error 'utils-internal-error', "Value for field #{fieldName} must be less than or equals to #{moment(maxValue).format(momentFormat)}"
 
