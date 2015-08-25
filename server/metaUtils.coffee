@@ -214,10 +214,6 @@ metaUtils.validateAndProcessValueFor = (meta, fieldName, value, actionType, mode
 				if field.maxValue? or field.minValue?
 					maxValue = field.maxValue
 					minValue = field.minValue
-					if field.type is 'date'
-						value.setHours(0)
-						value.setMinutes(0)
-						value.setSeconds(0)
 
 					if maxValue? and maxValue is '$now'
 						maxValue = new Date()
