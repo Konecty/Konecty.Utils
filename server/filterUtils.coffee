@@ -307,3 +307,28 @@ filterUtils.parseFilterObject = (filter, metaObject, req) ->
 		return $or: query
 
 	return $and: query
+
+filterUtils.parseDynamicData = (filter, keyword, data) ->
+	if filter?.filter?
+		filterUtils.parseDynamicData filter.filter, keyword, data
+		return filter
+
+	if _.isArray(filter.filters) and filter.filters.length > 0
+		for subFilter in filter.filters
+			return filterUtils.parseDynamicData subFilter, keyword, data
+
+	parseConditions = (condition) ->
+		if condition?.value?.indexOf(keyword) isnt -1
+			condition.value = utils.getObjectPathAgg(data, condition.value.replace(keyword + '.', ''))
+
+	if _.isArray(filter.conditions) and filter.conditions.length > 0
+		for condition in filter.conditions
+			if condition.disabled isnt true
+				parseConditions condition
+
+	else if _.isObject(filter.conditions) and Object.keys(filter.conditions).length > 0
+		for key, condition of filter.conditions
+			if condition.disabled isnt true
+				parseConditions condition
+
+	return filter

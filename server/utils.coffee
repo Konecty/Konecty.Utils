@@ -237,6 +237,28 @@ utils.runScriptBeforeValidation = (script, data, req, extraData) ->
 		req.notifyError 'runScriptBeforeValidation', e, {script: script, data: data}
 		return {}
 
+# Runs script in a sandboxed environment and returns resulting object
+utils.runValidationScript = (script, data, req, extraData) ->
+	try
+		user = JSON.parse JSON.stringify req.user if req.user?
+		contextData =
+			data: data
+			user: user
+			console: console
+			extraData: extraData
+
+		sandbox = vm.createContext contextData
+		script = "result = (function(data, user, console) { " + script + " })(data, user, console);"
+		vm.runInContext script, sandbox
+
+		if sandbox.result? and _.isObject sandbox.result
+			return sandbox.result
+		else
+			return {}
+	catch e
+		req.notifyError 'runValidationScript', e, {script: script, data: data}
+		return {}
+
 utils.formatValue = (value, field, ignoreIsList) ->
 	if not value?
 		return ''
