@@ -262,24 +262,23 @@ utils.runValidationScript = (script, data, req, extraData) ->
 utils.runScriptAfterSave = (script, data, context, extraData) ->
 	try
 		# exposed Meteor.call for sandboxed script
-		# konectyCall = (method) ->
-		# 	if method.match /^auth:/
-		# 		throw new Meteor.Error 'invalid-method', 'Trying to call an invalid method'
+		konectyCall = (method) ->
+			if method.match /^auth:/
+				throw new Meteor.Error 'invalid-method', 'Trying to call an invalid method'
 
-		# 	Meteor.call.apply context, arguments
+			Meteor.call.apply context, arguments
 
 		user = JSON.parse JSON.stringify context.user if context.user?
 		contextData =
 			data: data
 			user: user
 			console: console
-			# konectyCall: konectyCall
+			konectyCall: konectyCall
 			Models: Models
 			extraData: extraData
 
 		sandbox = vm.createContext contextData
-		# script = "result = (function(data, user, console, konectyCall, extraData) { " + script + " })(data, user, console, konectyCall, extraData);"
-		script = "result = (function(data, user, console, Models, extraData) { " + script + " })(data, user, console, Models, extraData);"
+		script = "result = (function(data, user, console, Models, konectyCall, extraData) { " + script + " })(data, user, console, Models, konectyCall, extraData);"
 		vm.runInContext script, sandbox
 
 		if sandbox.result? and _.isObject sandbox.result
