@@ -1,4 +1,4 @@
-vm = Npm.require 'vm'
+vm = Meteor.npmRequire 'vm'
 
 utils = {}
 
@@ -224,6 +224,11 @@ utils.runScriptBeforeValidation = (script, data, req, extraData) ->
 				if email.toPath?
 					email.to = utils.getObjectPathAgg(email.data, email.toPath)
 
+				# HACK for dealing with modified date fields and inserting emails
+				for key, value of email.data
+					if _.isString(value?['$date'])
+						email.data[key] = new Date(value['$date'])
+
 				email.type = 'Email'
 				email.status = 'Enviando'
 
@@ -257,37 +262,6 @@ utils.runValidationScript = (script, data, req, extraData) ->
 			return {}
 	catch e
 		req.notifyError 'runValidationScript', e, {script: script, data: data}
-		return {}
-
-utils.runScriptAfterSave = (script, data, context, extraData) ->
-	try
-		# exposed Meteor.call for sandboxed script
-		konectyCall = (method) ->
-			if method.match /^auth:/
-				throw new Meteor.Error 'invalid-method', 'Trying to call an invalid method'
-
-			Meteor.call.apply context, arguments
-
-		user = JSON.parse JSON.stringify context.user if context.user?
-		contextData =
-			data: data
-			user: user
-			console: console
-			konectyCall: konectyCall
-			Models: Models
-			extraData: extraData
-
-		sandbox = vm.createContext contextData
-		script = "result = (function(data, user, console, Models, konectyCall, extraData) { " + script + " })(data, user, console, Models, konectyCall, extraData);"
-		vm.runInContext script, sandbox
-
-		if sandbox.result? and _.isObject sandbox.result
-			return sandbox.result
-		else
-			return {}
-	catch e
-		console.log 'scriptAfterSave Error ->'.red, e
-		context.notifyError 'runScriptAfterSave', e, {script: script, data: data}
 		return {}
 
 utils.formatValue = (value, field, ignoreIsList) ->
