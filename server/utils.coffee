@@ -122,7 +122,7 @@ utils.getObjectIdString = (objectId) ->
 	if objectId instanceof Meteor.Collection.ObjectID
 		return objectId._str
 
-	if objectId instanceof global.History.db.bson_serializer.ObjectID
+	if objectId instanceof MongoInternals.NpmModule.ObjectID
 		return objectId.toString()
 
 	if _.isObject(objectId) and _.isString(objectId.$oid)

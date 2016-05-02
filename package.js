@@ -1,12 +1,13 @@
 Package.describe({
   name: 'konutils',
   summary: '',
-  version: '1.0.23',
+  version: '1.0.24',
   git: ''
 });
 
 Package.onUse(function(api) {
   api.versionsFrom('1.0');
+  api.use('mongo');
   api.use('coffeescript');
   api.use('nooitaf:colors@0.0.2');
   api.use('thepumpinglemma:object-path@1.0.0');
