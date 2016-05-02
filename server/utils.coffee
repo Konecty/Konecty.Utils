@@ -1,4 +1,4 @@
-vm = Meteor.npmRequire 'vm'
+vm = Npm.require 'vm'
 
 utils = {}
 
