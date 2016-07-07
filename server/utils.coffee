@@ -230,7 +230,7 @@ utils.runScriptBeforeValidation = (script, data, req, extraData) ->
 						email.data[key] = new Date(value['$date'])
 
 				email.type = 'Email'
-				email.status = 'Enviando'
+				email.status = 'Send'
 
 				Models['Message'].insert email
 
