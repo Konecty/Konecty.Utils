@@ -1,4 +1,4 @@
-vm = Meteor.npmRequire 'vm'
+vm = Npm.require 'vm'
 
 utils = {}
 
@@ -122,7 +122,7 @@ utils.getObjectIdString = (objectId) ->
 	if objectId instanceof Meteor.Collection.ObjectID
 		return objectId._str
 
-	if objectId instanceof global.History.db.bson_serializer.ObjectID
+	if objectId instanceof MongoInternals.NpmModule.ObjectID
 		return objectId.toString()
 
 	if _.isObject(objectId) and _.isString(objectId.$oid)
@@ -262,6 +262,37 @@ utils.runValidationScript = (script, data, req, extraData) ->
 			return {}
 	catch e
 		req.notifyError 'runValidationScript', e, {script: script, data: data}
+		return {}
+
+utils.runScriptAfterSave = (script, data, context, extraData) ->
+	try
+		# exposed Meteor.call for sandboxed script
+		konectyCall = (method) ->
+			if method.match /^auth:/
+				throw new Meteor.Error 'invalid-method', 'Trying to call an invalid method'
+
+			Meteor.call.apply context, arguments
+
+		user = JSON.parse JSON.stringify context.user if context.user?
+		contextData =
+			data: data
+			user: user
+			console: console
+			konectyCall: konectyCall
+			Models: Models
+			extraData: extraData
+
+		sandbox = vm.createContext contextData
+		script = "result = (function(data, user, console, Models, konectyCall, extraData) { " + script + " })(data, user, console, Models, konectyCall, extraData);"
+		vm.runInContext script, sandbox
+
+		if sandbox.result? and _.isObject sandbox.result
+			return sandbox.result
+		else
+			return {}
+	catch e
+		console.log 'scriptAfterSave Error ->'.red, e
+		context.notifyError 'runScriptAfterSave', e, {script: script, data: data}
 		return {}
 
 utils.formatValue = (value, field, ignoreIsList) ->
