@@ -451,11 +451,8 @@ metaUtils.validateAndProcessValueFor = (meta, fieldName, value, actionType, mode
 	return value
 
 metaUtils.getNextUserFromQueue = (queueStrId, user) ->
-	# Get Collection
-	collection = Models.QueueUser._getCollection()
-
-	# Create sync version of findAndModify in scope of collection
-	findAndModify = Meteor.wrapAsync _.bind(collection.findAndModify, collection)
+	collection = RocketChat.models.Settings.model.rawCollection()
+	findAndModify = Meteor.wrapAsync(collection.findAndModify, collection)
 
 	# Mount query, sort, update, and options
 	query =
@@ -481,6 +478,11 @@ metaUtils.getNextUserFromQueue = (queueStrId, user) ->
 	# Execute findAndModify
 	queueUser = findAndModify query, sort, update, options
 
+	if queueUser?.value?
+		queueUser = queueUser.value
+	else
+		queueUser = undefined
+
 	if not _.isObject queueUser
 		queueUser = Models.Queue.findOne queueStrId
 		if queueUser?._user?[0]?
@@ -500,14 +502,11 @@ metaUtils.getNextCode = (documentName, fieldName) ->
 	meta = Meta[documentName]
 	fieldName ?= 'code'
 
-	# Get Collection
-	collection = Models["#{documentName}.AutoNumber"]._getCollection()
-
 	# Force autoNumber record to exists
 	Models["#{documentName}.AutoNumber"].upsert {_id: fieldName}, {$set: {_id: fieldName}}
 
-	# Create sync version of findAndModify in scope of collection
-	findAndModify = Meteor.wrapAsync _.bind(collection.findAndModify, collection)
+	collection = Models["#{documentName}.AutoNumber"].rawCollection()
+	findAndModify = Meteor.wrapAsync(collection.findAndModify, collection);
 
 	# Mount query, sort, update, and options
 	query =
@@ -525,8 +524,8 @@ metaUtils.getNextCode = (documentName, fieldName) ->
 	# Try to get next code
 	try
 		result = findAndModify query, sort, update, options
-		if result and result.next_val
-			return result.next_val
+		if result?.value and result?.value?.next_val
+			return result.value.next_val
 	catch e
 		throw err
 

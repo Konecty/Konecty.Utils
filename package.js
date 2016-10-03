@@ -1,16 +1,15 @@
 Package.describe({
   name: 'konutils',
   summary: '',
-  version: '1.0.24',
+  version: '1.1.0',
   git: ''
 });
 
 Package.onUse(function(api) {
-  api.versionsFrom('1.0');
+  api.versionsFrom('1.3');
   api.use('mongo');
   api.use('coffeescript');
-  api.use('nooitaf:colors@0.0.2');
-  api.use('thepumpinglemma:object-path@1.0.0');
+  api.use('nooitaf:colors');
 
   api.addFiles('server/utils.coffee', ['server']);
   api.addFiles('server/sortUtils.coffee', ['server']);
