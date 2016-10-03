@@ -68,6 +68,7 @@ operatoresByType =
 	'filter'            : ['exists']
 	'filter.conditions' : ['exists']
 	'richText'          : ['exists']
+	'file'              : ['exists']
 
 filterUtils = {}
 

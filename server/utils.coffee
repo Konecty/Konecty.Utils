@@ -425,3 +425,13 @@ utils.getObjectPathAgg = (obj, path, defaultValue) ->
 		value = utils.getObjectPathAgg obj[currentPath], path.slice(1), defaultValue
 
 	return value
+
+utils.setObjectByPath = (obj, keyPath, value) ->
+	lastKeyIndex = keyPath.length-1
+	for i in [0...lastKeyIndex]
+		key = keyPath[i]
+		if not (key in obj)
+			obj[key] = {}
+		obj = obj[key]
+
+	obj[keyPath[lastKeyIndex]] = value
