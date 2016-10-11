@@ -281,6 +281,7 @@ utils.runScriptAfterSave = (script, data, context, extraData) ->
 			konectyCall: konectyCall
 			Models: Models
 			extraData: extraData
+			moment: moment
 
 		sandbox = vm.createContext contextData
 		script = "result = (function(data, user, console, Models, konectyCall, extraData) { " + script + " })(data, user, console, Models, konectyCall, extraData);"
