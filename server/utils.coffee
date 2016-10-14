@@ -1,4 +1,5 @@
 vm = Npm.require 'vm'
+momentzone = Npm.require 'moment-timezone'
 
 utils = {}
 
@@ -282,6 +283,7 @@ utils.runScriptAfterSave = (script, data, context, extraData) ->
 			Models: Models
 			extraData: extraData
 			moment: moment
+			momentzone: momentzone
 
 		sandbox = vm.createContext contextData
 		script = "result = (function(data, user, console, Models, konectyCall, extraData) { " + script + " })(data, user, console, Models, konectyCall, extraData);"

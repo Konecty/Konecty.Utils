@@ -28,3 +28,7 @@ Package.onUse(function(api) {
   api.export(['lookupUtils'], ['server']);
   api.export(['metaUtils'], ['server']);
 });
+
+Npm.depends({
+  'moment-timezone': '0.5.6'
+});
