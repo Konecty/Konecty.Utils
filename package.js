@@ -6,11 +6,10 @@ Package.describe({
 });
 
 Package.onUse(function(api) {
-  api.versionsFrom('1.0');
   api.use('mongo');
   api.use('coffeescript');
-  api.use('nooitaf:colors@0.0.2');
-  api.use('thepumpinglemma:object-path@1.0.0');
+  api.use('nooitaf:colors');
+  api.use('thepumpinglemma:object-path');
 
   api.addFiles('server/utils.coffee', ['server']);
   api.addFiles('server/sortUtils.coffee', ['server']);
