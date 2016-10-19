@@ -6,10 +6,10 @@ Package.describe({
 });
 
 Package.onUse(function(api) {
-  api.versionsFrom('1.3');
   api.use('mongo');
   api.use('coffeescript');
   api.use('nooitaf:colors');
+  api.use('thepumpinglemma:object-path');
 
   api.addFiles('server/utils.coffee', ['server']);
   api.addFiles('server/sortUtils.coffee', ['server']);
@@ -26,4 +26,8 @@ Package.onUse(function(api) {
   api.export(['filterUtils'], ['server']);
   api.export(['lookupUtils'], ['server']);
   api.export(['metaUtils'], ['server']);
+});
+
+Npm.depends({
+  'moment-timezone': '0.5.6'
 });
