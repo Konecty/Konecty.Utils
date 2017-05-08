@@ -1,3 +1,5 @@
+moment = Npm.require('moment');
+
 crypto = Npm.require 'crypto'
 
 metaUtils = {}
@@ -212,14 +214,13 @@ metaUtils.validateAndProcessValueFor = (meta, fieldName, value, actionType, mode
 				value = new Date(value.$date || value)
 
 				if field.maxValue? or field.minValue?
-					compareValue = new Date(value)
 					maxValue = field.maxValue
 					minValue = field.minValue
 					if field.type is 'date'
-						compareValue.setHours(0)
-						compareValue.setMinutes(0)
-						compareValue.setSeconds(0)
-						compareValue.setMilliseconds(0)
+						value.setHours(0)
+						value.setMinutes(0)
+						value.setSeconds(0)
+						value.setMilliseconds(0)
 
 					if maxValue? and maxValue is '$now'
 						maxValue = new Date()
@@ -242,10 +243,10 @@ metaUtils.validateAndProcessValueFor = (meta, fieldName, value, actionType, mode
 					else
 						momentFormat = 'DD/MM/YYYY HH:mm:ss'
 
-					if mustBeDate(maxValue) isnt false and compareValue > maxValue
+					if mustBeDate(maxValue) isnt false and value > maxValue
 						return new Meteor.Error 'utils-internal-error', "Value for field #{fieldName} must be less than or equals to #{moment(maxValue).format(momentFormat)}"
 
-					if mustBeDate(minValue) isnt false and compareValue < minValue
+					if mustBeDate(minValue) isnt false and value < minValue
 						return new Meteor.Error 'utils-internal-error', "Value for field #{fieldName} must be greater than or equals to #{moment(minValue).format(momentFormat)}"
 			when 'time'
 				if mustBeNumber(value) is false then return result
