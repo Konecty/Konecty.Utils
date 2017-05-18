@@ -12,7 +12,7 @@ metaUtils.validateAndProcessValueFor = (meta, fieldName, value, actionType, mode
 
 	# Validate required fields
 	if field.isRequired is true and not value?
-		return new Meteor.Error 'utils-internal-error', "O Campo '#{fieldName}' é obrigatório, mas não está presente no dado."
+		return new Meteor.Error 'utils-internal-error', "O Campo '#{fieldName}' é obrigatório, mas não está presente no dado.", { meta: meta, fieldName: fieldName, value: value, actionType: actionType, model: model, objectOriginalValues: objectOriginalValues, objectNewValues: objectNewValues, idsToUpdate: idsToUpdate }
 
 	# Validate List fields
 	if field.isList is true
