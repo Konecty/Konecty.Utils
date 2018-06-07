@@ -69,6 +69,7 @@ operatoresByType =
 	'filter.conditions' : ['exists']
 	'richText'          : ['exists']
 	'file'              : ['exists']
+	'percentage'		: ['less_than', 'greater_than', 'less_or_equals', 'greater_or_equals', 'between']
 
 filterUtils = {}
 
